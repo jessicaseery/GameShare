@@ -1,12 +1,23 @@
 import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Header from "./components/Header"
+import Home from "./components/Home"
+import GlobalStyles from "./GlobalStyles";
+import GameInfo from "./components/GameInfo";
 
-function App() {
+const App = () => {
+
   return (
-    <div >
-    <h1>This is my final project</h1>
-    <p>test - hello</p>
-    </div>
+    <BrowserRouter>
+    <GlobalStyles/>
+    <Header />
+        <Routes>
+          <Route path="/" element={<Home/>}/>
+          <Route path="/games/:id" element={<GameInfo/>}/>
+        </Routes>
+    </BrowserRouter>
   );
 }
+
 
 export default App;

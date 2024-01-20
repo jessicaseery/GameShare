@@ -6,7 +6,6 @@ const Home = () => {
     const [games, setGames] = useState([]);
 
     useEffect(() => {
-
     fetch("http://localhost:8000/games")
         .then((response) => response.json())
         .then((data) => setGames(data))
@@ -36,6 +35,7 @@ const Wrapper = styled.div`
     padding: 20px;
     background-color: #3e3e3e;
     height: 100%;
+    padding-top: 100px;
 `;
 
 const Game = styled.div`

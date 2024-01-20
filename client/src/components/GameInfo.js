@@ -16,7 +16,7 @@ useEffect(() => {
         })
         .then((data) => setGame(data))
         .catch((error) => console.error("Error fetching game:", error.message));
-});
+}, [id]);
 
 
 return (
@@ -25,11 +25,16 @@ return (
         <Content style={{ backgroundImage: `url(${game.bkg_img})`}}>
         <GameName>{game.name}</GameName>
         {/* <GameImg src={game.bkg_img} alt={game.name} /> */}
-        <p>Released: {game.released}</p>
+
+        <ReleaseDate>Released on {game.released}</ReleaseDate>
+        <Platforms>Platforms: {game.platforms.map((platform) => platform.name).join(', ')}</Platforms>
+
+        <BottomInfo>
         <p>Developer: {game.developper}</p>
-        <p>Platforms: {game.platforms.map((platform) => platform.name).join(', ')}</p>
+        
         <p>Genres: {game.genre.map((genre) => genre.name).join(', ')}</p>
         <p>{game.description}</p>
+        </BottomInfo>
         </Content>
     ) : (
         <p>Loading...</p>
@@ -42,6 +47,24 @@ const Wrapper = styled.div`
     height: 100vh;
     overflow: hidden;
     background-color: #3e3e3e;
+`
+const ReleaseDate = styled.p`
+color: white;
+text-align: center;
+border-radius: 10px;
+`
+const Platforms = styled.p`
+color: white;
+background-color: grey;
+border-radius: 10px;
+padding: 4px;
+text-align: center;
+`
+const BottomInfo = styled.div`
+color: white;
+margin-top: 50px;
+font-size: 18px;
+
 `
 
 const Content = styled.div`

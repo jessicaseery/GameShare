@@ -62,7 +62,6 @@ const addNewGame = async (req, res) => {
     const db = await getDatabase();
     const gamesCollection = db.collection("games");
     try {
-
         const newGameId = new ObjectId();
         newGame._id = newGameId;
         await gamesCollection.insertOne(newGame);
@@ -73,9 +72,99 @@ const addNewGame = async (req, res) => {
     }
 };
 
+let usersCollection;
+const addUser = async (userData) => {
+    const db = await getDatabase();
+    const usersCollection = db.collection('users');
+    await usersCollection.insertOne(userData);
+};
+const checkCredentials = async (username, password) => {
+    const client = new MongoClient(MONGO_URI, options);
+    try {
+        await client.connect();
+        const db = client.db("final-project");
+        usersCollection = db.collection('users');
+
+        const user = await usersCollection.findOne({ username, password });
+        return user ? true : false;
+    } finally {
+        client.close();
+    }
+};
+
+const signIn = async (req, res) => {
+    const { username, password } = req.body;
+    const isValidCredentials = await checkCredentials(username, password);
+
+    if (isValidCredentials) {
+        if (!usersCollection) {
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+
+        const user = await usersCollection.findOne({ username });
+        if (user) {
+            const userId = user._id;
+            res.json({ message: 'User signed in successfully', userId });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } else {
+        res.status(401).json({ message: 'Invalid credentials' });
+    }
+};
+const signUp = async (req, res) => {
+    const { firstName, lastName, username, password, profilepic } = req.body;
+    const newUserId = new ObjectId();
+
+    const userData = {
+        _id: newUserId,
+        firstName,
+        lastName,
+        username,
+        password,
+        profilepic,
+    };
+    try {
+        await addUser(userData);
+        res.json({ message: 'User signed up successfully', userId: newUserId });
+    } catch (error) {
+        res.status(500).json({ message: 'Error signing up' });
+    }
+};
+const getUserById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const user = await getUserByIdFromDatabase(id);
+        if (user) {
+            res.json(user);
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (error) {
+        console.error("Error fetching user by ID:", error);
+        res.status(500).json({ message: "Error fetching user by ID", error: error.message });
+    }
+};
+
+const getUserByIdFromDatabase = async (userId) => {
+    const client = new MongoClient(MONGO_URI, options);
+    try {
+        await client.connect();
+        const db = client.db("final-project");
+        const usersCollection = db.collection('users');
+        const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+        return user;
+    } finally {
+        client.close();
+    }
+};
+
 module.exports = {
     updateGameById,
     getAllGames,
     getGameById,
     addNewGame,
+    signIn,
+    signUp,
+    getUserById,
 };

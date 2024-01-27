@@ -3,8 +3,9 @@ import styled, { keyframes } from "styled-components"
 import { Link } from "react-router-dom"
 import SignIn from "./SignIn"
 import SignUp from "./SignUp"
+import Searchbar from "./Searchbar"
 
-const Header = () => {
+const Header = ({gameNamesAndIds}) => {
     const [activePopup, setActivePopup] = useState(null);
     const [loggedInUser, setLoggedInUser] = useState(null);
     const handleSwitchToSignUp = () => {
@@ -14,17 +15,18 @@ const Header = () => {
         setActivePopup(activePopup === popup ? null : popup);
     };
     
-    const closePopupOnOutsideClick = (event) => {
+    useEffect(() => {
+        const closePopupOnOutsideClick = (event) => {
         const popupElement = document.getElementById(activePopup);
-        if (
-        activePopup &&
-        (!popupElement ||
-            (!popupElement.contains(event.target) &&
-            event.target.className !== "allowed-click"))
-        ) {
-        setActivePopup(null);
+        if ( activePopup && (!popupElement || (!popupElement.contains(event.target) &&  event.target.className !== "allowed-click"))) {
+            setActivePopup(null);
         }
-    };
+        };
+        document.addEventListener("mousedown", closePopupOnOutsideClick);
+        return () => {
+        document.removeEventListener("mousedown", closePopupOnOutsideClick);
+        };
+    }, [activePopup]);
     const handleSignIn = (userDetails) => {
         setLoggedInUser(userDetails);
     };
@@ -33,13 +35,7 @@ const Header = () => {
         localStorage.removeItem("loggedInUser");
         setLoggedInUser(null);
     };
-    
-    useEffect(() => {
-        document.addEventListener("mousedown", closePopupOnOutsideClick);
-        return () => {
-        document.removeEventListener("mousedown", closePopupOnOutsideClick);
-        };
-    }, [activePopup]);
+
     
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
@@ -53,6 +49,7 @@ const Header = () => {
     return (
         <Wrapper>
         <CompanyName to="/">GameShare</CompanyName>
+        <Searchbar gameNamesAndIds={gameNamesAndIds}/>
         {loggedInUser ? (
         <UserProfile>
             Hello, {loggedInUser.firstName}

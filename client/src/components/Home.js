@@ -2,16 +2,20 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components"
 import { Link } from "react-router-dom";
 
-const Home = () => {
+const Home = ({setGameNamesAndIds}) => {
     const [games, setGames] = useState([]);
 
     useEffect(() => {
     fetch("http://localhost:8000/games")
         .then((response) => response.json())
-        .then((data) => setGames(data))
+        .then((data) => {
+            const gameNamesAndIds = data.map(({ _id, name }) => ({ id: _id, name }));
+            setGameNamesAndIds(gameNamesAndIds);
+            setGames(data);
+        })
         .catch((error) => console.error("Error fetching games:", error));
-    }, []);
-
+    }, [setGameNamesAndIds]);
+    
     return(
         <Wrapper>
         {games.map((game) => (

@@ -13,13 +13,18 @@ const SignUp = ({ onClose, onSignUp, onSignIn }) => {
     const handleSignUp = async () => {
         setLoading(true);
         try {
+            const formData = new FormData();
+            formData.append("firstName", firstName);
+            formData.append("lastName", lastName);
+            formData.append("username", username);
+            formData.append("password", password);
+            formData.append("profilepic", profilepic);
+    
             const res = await fetch("http://localhost:8000/signup", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ firstName, lastName, username, password, profilepic }),
+                body: formData,
             });
+    
             const resData = await res.json();
             if (resData.message === "User signed up successfully") {
                 const { userId } = resData;
@@ -51,7 +56,7 @@ const SignUp = ({ onClose, onSignUp, onSignIn }) => {
                     <Labels>Last Name: <InputBoxes type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} /></Labels>
                     <Labels>Username: <InputBoxes type="text" value={username} onChange={(e) => setUsername(e.target.value)} /></Labels>
                     <Labels>Password: <InputBoxes type="password" value={password} onChange={(e) => setPassword(e.target.value)} /></Labels>
-                    {/* <Labels>Profile Picture: <InputBoxes type="text" value={profilepic} onChange={(e) => setProfilepic(e.target.value)} /></Labels> */}
+                    <Labels>Profile Picture: <InputBoxes type="file" accept="image/*" onChange={(e) => setProfilepic(e.target.files[0])} /></Labels>
                     {error && <ErrorBox>{error}</ErrorBox>}
                     <Button type="button" onClick={handleSignUp}>Sign up</Button>
                     <NoAccount>

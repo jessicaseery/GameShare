@@ -1,6 +1,7 @@
 "use strict";
 // import the needed node_modules.
 const express = require("express");
+const fileUpload = require("express-fileupload");
 const morgan = require("morgan");
 const {
     getGameById,
@@ -32,7 +33,7 @@ const app = express();
 
     // Any requests for static files will go into the public folder
     app.use(express.static("public"))
-    
+    app.use(fileUpload());
     // Nothing to modify above or below this line
     // ---------------------------------
     app.get("/games", getAllGames)

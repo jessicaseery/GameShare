@@ -113,8 +113,9 @@ const signIn = async (req, res) => {
     }
 };
 const signUp = async (req, res) => {
-    const { firstName, lastName, username, password, profilepic } = req.body;
+    const { firstName, lastName, username, password} = req.body;
     const newUserId = new ObjectId();
+    const profilepic = req.files && req.files.profilepic ? req.files.profilepic : null;
 
     const userData = {
         _id: newUserId,
@@ -136,7 +137,18 @@ const getUserById = async (req, res) => {
     try {
         const user = await getUserByIdFromDatabase(id);
         if (user) {
-            res.json(user);
+            const { _id, firstName, lastName, username, profilepic } = user;
+            const imagebase = profilepic
+                ? profilepic.data.toString("base64")
+                : null;
+
+            res.json({
+                _id,
+                firstName,
+                lastName,
+                username,
+                profilepic: { ...profilepic, data: imagebase },
+            });
         } else {
             res.status(404).json({ message: "User not found" });
         }

@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from "react"
 import styled, { keyframes } from "styled-components"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import SignIn from "./SignIn"
 import SignUp from "./SignUp"
 import Searchbar from "./Searchbar"
 
-const Header = ({gameNamesAndIds}) => {
+const Header = ({gameNamesAndIds , setLoggedInUser , loggedInUser}) => {
     const [activePopup, setActivePopup] = useState(null);
-    const [loggedInUser, setLoggedInUser] = useState(null);
+    const navigate = useNavigate()
     const handleSwitchToSignUp = () => {
         setActivePopup("signup");
     };
@@ -34,6 +34,7 @@ const Header = ({gameNamesAndIds}) => {
     const handleLogout = () => {
         localStorage.removeItem("loggedInUser");
         setLoggedInUser(null);
+        navigate("/")
     };
 
     
@@ -45,16 +46,18 @@ const Header = ({gameNamesAndIds}) => {
             return { ...prevUser, ...storedUser };
         });
         }
-    }, []);
+    }, [setLoggedInUser]);
     return (
         <Wrapper>
         <CompanyName to="/">GameShare</CompanyName>
         <Searchbar gameNamesAndIds={gameNamesAndIds}/>
         {loggedInUser ? (
-        <UserProfile>
-            Hello, {loggedInUser.firstName}
+            <UserProfile>
+            <Link to={`/profile/${loggedInUser.userId}`} style={{ textDecoration: "none" }}>
+                <HelloUserButton>Hello, {loggedInUser.firstName}</HelloUserButton>
+            </Link>
             <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
-        </UserProfile>
+            </UserProfile>
         ) : (
         <div>
             <LogIn onClick={() => togglePopup("signin")}>Sign In</LogIn>
@@ -82,6 +85,14 @@ const LogoutButton = styled.button`
 &:hover {
     background-color: #1c1b1d;
 }
+`;
+const HelloUserButton = styled.button`
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #fff;
+    margin-right: 10px;
 `;
 const UserProfile = styled.div`
     color: white;

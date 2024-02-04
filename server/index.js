@@ -10,7 +10,9 @@ const {
     addNewGame,
     signIn,
     signUp,
-    getUserById
+    getUserById,
+    addCharacterToGame,
+    addCommentToGame
 } = require("./handlers");
 
 
@@ -40,6 +42,8 @@ const app = express();
     app.get("/games/:id", getGameById)
     app.patch("/games/:id", updateGameById)
     app.post("/games", addNewGame)
+    app.post("/games/:id/characters", addCharacterToGame)
+    app.post('/games/:id/comments', addCommentToGame);
     app.post("/signin", signIn)
     app.post("/signup", signUp)
     app.get("/users/:id", getUserById);

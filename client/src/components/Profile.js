@@ -23,6 +23,7 @@ const Profile = () => {
             <FullName>{`${userProfile.firstName}`} {`${userProfile.lastName}`}</FullName>
             <p>{`@${userProfile.username}`}</p>
             <p>Bio?</p>
+            <p>Favourite Games?</p>
         </div>
         )}
     </Wrapper>

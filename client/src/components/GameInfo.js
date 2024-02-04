@@ -62,19 +62,28 @@ return (
             </div>
         </Infobox>
         </BottomInfo>
+        <Loginpls>
+        {loggedInUser ? (
         <Comments>
+        <Text>Leave this game a comment!</Text> 
     <CommentSection gameId={game._id} loggedInUser={loggedInUser} />
+    <AllIndComments>
     {comments.map((comment) => (
-    <div key={comment.userId}>
+    <IndvComments key={comment.userId}>
     <p>
         <ProfileLink href={`/profile/${comment.userId}`}>{comment.username}</ProfileLink>
     </p>
         <p>{comment.text}</p>
-        {comment.recommended && <button />}
+        {comment.recommended && <Recommended>Recommends this game</Recommended>}
 
-    </div>
+    </IndvComments>
 ))}
+</AllIndComments>
 </Comments>
+) : (
+    <Text>Please log in to comment and view comments.</Text>
+)}
+</Loginpls>
         </div>
     ) : (
         <p>Loading...</p>
@@ -84,18 +93,49 @@ return (
 };
 
 const Wrapper = styled.div`
+color: white;
+
     height: 100%;
     background-color: #3e3e3e;
-    margin: 0;
-    body, html {
-        height: 100%;
-        margin: 0;
-        background-color: #3e3e3e;
-    }
-    
+`
+const Loginpls = styled.div`
+display: flex;
+flex-direction: row;
+justify-content: center;
+width: 500px;
+margin: auto;
+
+`
+const Recommended = styled.button`
+background-color: green;
+color: white;
+border: none;
+border-radius: 10px;
+`
+const Text = styled.p`
+font-size: 20px;
+font-family: 'Khand', sans-serif;
+color: white;
+`
+
+const IndvComments = styled.div`
+background-color: white;
+color: black;
+border: 2px solid purple;
+width: 350px;
+text-align: center;
+`
+const AllIndComments = styled.div`
+display: flex;
+flex-direction: row;
+justify-content: center;
 `
 const ProfileLink = styled.a`
-color:white;
+color: grey;
+margin-right: 3px;
+margin-left: 3px;
+font-weight: bold;
+float: left;
 text-decoration: none;
 `
 
@@ -143,6 +183,7 @@ const Comments = styled.div`
 text-align: center;
 color: white;
 margin-top: 50px;
+
 `
 const BottomInfo = styled.div`
 color: white;

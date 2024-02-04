@@ -1,13 +1,10 @@
 "use strict";
 const { MongoClient, ObjectId } = require("mongodb");
 const MONGO_URI ="mongodb+srv://jessicaseery:Jetskiseery13!@cluster0.ft8wtmq.mongodb.net/?retryWrites=true&w=majority";
-const options = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-};
+
 
 const getDatabase = async () => {
-    const client = await MongoClient.connect(MONGO_URI, options);
+    const client = await MongoClient.connect(MONGO_URI);
     return client.db("final-project");
 };
 
@@ -62,7 +59,7 @@ const updateGameById = async (req, res) => {
 };
 
 const getAllGames = async (req, res) => {
-    const client = new MongoClient(MONGO_URI, options);
+    const client = new MongoClient(MONGO_URI);
 
     try {
         await client.connect();
@@ -117,7 +114,7 @@ const addUser = async (userData) => {
     await usersCollection.insertOne(userData);
 };
 const checkCredentials = async (username, password) => {
-    const client = new MongoClient(MONGO_URI, options);
+    const client = new MongoClient(MONGO_URI);
     try {
         await client.connect();
         const db = client.db("final-project");
@@ -196,7 +193,7 @@ const getUserById = async (req, res) => {
 };
 
 const getUserByIdFromDatabase = async (userId) => {
-    const client = new MongoClient(MONGO_URI, options);
+    const client = new MongoClient(MONGO_URI);
     try {
         await client.connect();
         const db = client.db("final-project");

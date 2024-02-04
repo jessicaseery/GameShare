@@ -15,7 +15,6 @@ const {
     addCommentToGame
 } = require("./handlers");
 
-
 const app = express();
     // Below are methods that are included in express(). We chain them for convenience.
     // --------------------------------------------------------------------------------
@@ -31,7 +30,6 @@ const app = express();
     });
     // This will give us will log more info to the console. see https://www.npmjs.com/package/morgan
     app.use(express.json())
-
 
     // Any requests for static files will go into the public folder
     app.use(express.static("public"))

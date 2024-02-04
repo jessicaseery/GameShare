@@ -7,6 +7,10 @@ const CommentSection = ({ loggedInUser, gameId }) => {
 
     const handleCommentSubmit = async () => {
     try {
+        if (!loggedInUser) {
+            console.log('User not logged in. Please log in to comment and view comments.');
+            return;
+        }
         const res = await fetch(`http://localhost:8000/games/${gameId}/comments`, {
         method: 'POST',
         headers: {
@@ -29,6 +33,8 @@ const CommentSection = ({ loggedInUser, gameId }) => {
 
     return (
     <Wrapper>
+        {loggedInUser ? (
+            <div>
         <div>
         <CommentText value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Write a comment..."/>
         </div>
@@ -39,6 +45,10 @@ const CommentSection = ({ loggedInUser, gameId }) => {
         </label>
         <SubmitBtn onClick={handleCommentSubmit}>Submit</SubmitBtn>
         </RightSide>
+        </div>
+        ) : (
+            <p>Please log in to comment.</p>
+        )}
     </Wrapper>
     );
 };

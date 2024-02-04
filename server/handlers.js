@@ -11,6 +11,44 @@ const getDatabase = async () => {
     return client.db("final-project");
 };
 
+const updateGame = async (id, updatedData, character) => {
+    const db = await getDatabase();
+    const gamesCollection = db.collection("games");
+
+    try {
+        console.log("Updating game with ID:", id);
+
+        await gamesCollection.updateOne(
+            { _id: new ObjectId(id) },
+            { $set: updatedData },
+        );
+
+        console.log("Game updated successfully");
+    } catch (error) {
+        console.error("Error updating game in the database:", error);
+        throw error;
+    }
+};
+const addCharacterToGame = async (req, res) => {
+    const { id } = req.params;
+    const newCharacter = req.body;
+
+    try {
+        const db = await getDatabase();
+        const gamesCollection = db.collection("games");
+
+        await gamesCollection.updateOne(
+            { _id: new ObjectId(id) },
+            { $push: { characters: newCharacter } }
+        );
+
+        res.json({ message: "Character added to the game successfully" });
+    } catch (error) {
+        console.error("Error adding character to the game:", error);
+        res.status(500).json({ message: "Error adding character to the game" });
+    }
+};
+
 const updateGameById = async (req, res) => {
     const { id } = req.params;
     const updatedData = req.body;
@@ -24,19 +62,19 @@ const updateGameById = async (req, res) => {
 };
 
 const getAllGames = async (req, res) => {
-    const client = new MongoClient(MONGO_URI)
+    const client = new MongoClient(MONGO_URI, options);
+
     try {
-    await client.connect();
-    const db = client.db("final-project")
-    const games = await db.collection("games").find({}).toArray();
-    res.json(games);
+        await client.connect();
+        const db = client.db("final-project");
+        const games = await db.collection("games").find({}).toArray();
+        res.json(games);
     } catch (error) {
-    res.status(500).json({ message: "Error fetching games" });
-    }finally {
+        res.status(500).json({ message: "Error fetching games" });
+    } finally {
         client.close();
     }
 };
-
 const getGameById = async (req, res) => {
     const client = new MongoClient(MONGO_URI)
     try {
@@ -116,7 +154,6 @@ const signUp = async (req, res) => {
     const { firstName, lastName, username, password} = req.body;
     const newUserId = new ObjectId();
     const profilepic = req.files && req.files.profilepic ? req.files.profilepic : null;
-
     const userData = {
         _id: newUserId,
         firstName,
@@ -170,6 +207,32 @@ const getUserByIdFromDatabase = async (userId) => {
         client.close();
     }
 };
+const addCommentToGame = async (req, res) => {
+    const { id } = req.params;
+    const { userId, username, text, recommended } = req.body;
+
+    try {
+    const db = await getDatabase();
+    const gamesCollection = db.collection('games');
+    await gamesCollection.updateOne(
+        { _id: new ObjectId(id) },
+        {$push: {
+            comments: {
+                userId: new ObjectId(userId),
+                username,
+                text,
+                recommended,
+                    },
+                },
+        }
+    );
+
+    res.json({ message: 'Comment added successfully' });
+    } catch (error) {
+        console.error('Error adding comment to the game:', error);
+        res.status(500).json({ message: 'Error adding comment to the game' });
+    }
+};
 
 module.exports = {
     updateGameById,
@@ -179,4 +242,6 @@ module.exports = {
     signIn,
     signUp,
     getUserById,
+    addCharacterToGame,
+    addCommentToGame
 };

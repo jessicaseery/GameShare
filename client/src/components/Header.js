@@ -42,9 +42,7 @@ const Header = ({gameNamesAndIds , setLoggedInUser , loggedInUser}) => {
         const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
         if (storedUser) {
         console.log("Stored User:", storedUser);
-        setLoggedInUser((prevUser) => {
-            return { ...prevUser, ...storedUser };
-        });
+        setLoggedInUser(storedUser)
         }
     }, [setLoggedInUser]);
     return (

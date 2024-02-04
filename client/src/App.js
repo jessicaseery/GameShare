@@ -16,7 +16,7 @@ const App = () => {
     <Header gameNamesAndIds={gameNamesAndIds} setLoggedInUser={setLoggedInUser} loggedInUser={loggedInUser}/>
         <Routes>
           <Route path="/" element={<Home setGameNamesAndIds={setGameNamesAndIds}/>}/>
-          <Route path="/games/:id" element={<GameInfo/>}/>
+          <Route path="/games/:id" element={<GameInfo loggedInUser={loggedInUser}/>}/>
           <Route path="/profile/:id" element={<Profile loggedInUser={loggedInUser}/>}/>
         </Routes>
     </BrowserRouter>

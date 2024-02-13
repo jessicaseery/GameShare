@@ -1,5 +1,7 @@
 "use strict";
 const { MongoClient, ObjectId } = require("mongodb");
+const bcrypt = require('bcrypt');
+
 const MONGO_URI ="mongodb+srv://jessicaseery:Jetskiseery13!@cluster0.ft8wtmq.mongodb.net/?retryWrites=true&w=majority";
 
 
@@ -120,8 +122,13 @@ const checkCredentials = async (username, password) => {
         const db = client.db("final-project");
         usersCollection = db.collection('users');
 
-        const user = await usersCollection.findOne({ username, password });
-        return user ? true : false;
+        const user = await usersCollection.findOne({ username });
+        if (!user) {
+            return false;
+        }
+
+        const isValidPassword = await bcrypt.compare(password, user.password);
+        return isValidPassword;
     } finally {
         client.close();
     }
@@ -148,21 +155,23 @@ const signIn = async (req, res) => {
     }
 };
 const signUp = async (req, res) => {
-    const { firstName, lastName, username, password} = req.body;
+    const { firstName, lastName, username, password } = req.body;
     const newUserId = new ObjectId();
     const profilepic = req.files && req.files.profilepic ? req.files.profilepic : null;
-    const userData = {
-        _id: newUserId,
-        firstName,
-        lastName,
-        username,
-        password,
-        profilepic,
-    };
     try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const userData = {
+            _id: newUserId,
+            firstName,
+            lastName,
+            username,
+            password: hashedPassword,
+            profilepic,
+        };
         await addUser(userData);
         res.json({ message: 'User signed up successfully', userId: newUserId });
     } catch (error) {
+        console.error("Error signing up:", error);
         res.status(500).json({ message: 'Error signing up' });
     }
 };
@@ -171,7 +180,7 @@ const getUserById = async (req, res) => {
     try {
         const user = await getUserByIdFromDatabase(id);
         if (user) {
-            const { _id, firstName, lastName, username, profilepic } = user;
+            const { _id, firstName, lastName, username, profilepic, favorites } = user;
             const imagebase = profilepic
                 ? profilepic.data.toString("base64")
                 : null;
@@ -182,6 +191,7 @@ const getUserById = async (req, res) => {
                 lastName,
                 username,
                 profilepic: { ...profilepic, data: imagebase },
+                favorites,
             });
         } else {
             res.status(404).json({ message: "User not found" });
@@ -189,6 +199,25 @@ const getUserById = async (req, res) => {
     } catch (error) {
         console.error("Error fetching user by ID:", error);
         res.status(500).json({ message: "Error fetching user by ID", error: error.message });
+    }
+};
+const deleteAccount = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const db = await getDatabase();
+        const usersCollection = db.collection('users');
+        const gamesCollection = db.collection('games');
+        await usersCollection.deleteOne({ _id: new ObjectId(id) });
+        await gamesCollection.updateMany(
+            { "comments.userId": new ObjectId(id) },
+            { $pull: { comments: { userId: new ObjectId(id) } } }
+        );
+
+        res.json({ message: 'Account deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting account:', error);
+        res.status(500).json({ message: 'Error deleting account' });
     }
 };
 
@@ -230,6 +259,46 @@ const addCommentToGame = async (req, res) => {
         res.status(500).json({ message: 'Error adding comment to the game' });
     }
 };
+const addFavoriteGame = async (req, res) => {
+    const { id } = req.params;
+    const { gameId } = req.body;
+    try {
+        const db = await getDatabase();
+        const usersCollection = db.collection('users');
+        await usersCollection.updateOne(
+            { _id: new ObjectId(id) },
+            { $setOnInsert: { favorites: [] } },
+            { upsert: true }
+        );
+        await usersCollection.updateOne(
+            { _id: new ObjectId(id) },
+            { $addToSet: { favorites: gameId } }
+        );
+        res.json({ message: "Game added to favorites successfully" });
+    } catch (error) {
+        console.error("Error adding game to favorites:", error);
+        res.status(500).json({ message: "Error adding game to favorites" });
+    }
+};
+
+const getFavoriteGamesForUser = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const db = await getDatabase();
+        const usersCollection = db.collection('users');
+        const user = await usersCollection.findOne({ _id: new ObjectId(id) });
+        if (user) {
+            const favoriteGames = user.favorites || [];
+            res.json(favoriteGames);
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (error) {
+        console.error("Error fetching favorite games for user:", error);
+        res.status(500).json({ message: "Error fetching favorite games for user" });
+    }
+};
+
 
 module.exports = {
     updateGameById,
@@ -240,5 +309,8 @@ module.exports = {
     signUp,
     getUserById,
     addCharacterToGame,
-    addCommentToGame
+    addCommentToGame,
+    addFavoriteGame,
+    getFavoriteGamesForUser,
+    deleteAccount
 };

@@ -8,6 +8,12 @@ const { id } = useParams();
 const [game, setGame] = useState(null);
 const [comments, setComments] = useState([]);
 
+const fetchComments = async () => {
+    const response = await fetch(`http://localhost:8000/games/${id}`);
+    const data = await response.json();
+    return data.comments || [];
+};
+
 useEffect(() => {
     fetch(`http://localhost:8000/games/${id}`)
         .then((response) => {
@@ -25,6 +31,10 @@ useEffect(() => {
         .catch((error) => console.error("Error fetching game:", error.message));
 }, [id]);
 
+const refreshComments = async () => {
+    const updatedComments = await fetchComments();
+    setComments(updatedComments);
+};
 
 return (
     <Wrapper>
@@ -66,7 +76,7 @@ return (
         {loggedInUser ? (
         <Comments>
         <Text>Leave this game a comment!</Text> 
-    <CommentSection gameId={game._id} loggedInUser={loggedInUser} />
+    <CommentSection gameId={game._id} loggedInUser={loggedInUser} refreshComments={refreshComments} />
     <AllIndComments>
     {comments.map((comment) => (
     <IndvComments key={comment.userId}>
@@ -123,20 +133,28 @@ background-color: white;
 color: black;
 border: 2px solid purple;
 width: 350px;
+font-family: 'Khand', sans-serif;
+font-weight: bold;
 text-align: center;
+margin-right: 5%;
+height: 50px;
+margin-top: 5px;
+border-radius: 10px;
 `
 const AllIndComments = styled.div`
 display: flex;
-flex-direction: row;
+flex-direction: column;
 justify-content: center;
+
 `
 const ProfileLink = styled.a`
-color: grey;
+color: black;
 margin-right: 3px;
 margin-left: 3px;
 font-weight: bold;
 float: left;
-text-decoration: none;
+padding: 2px;
+font-size: 17px;
 `
 
 const ReleaseDate = styled.p`
@@ -183,7 +201,7 @@ const Comments = styled.div`
 text-align: center;
 color: white;
 margin-top: 50px;
-
+margin-bottom: 50px;
 `
 const BottomInfo = styled.div`
 color: white;

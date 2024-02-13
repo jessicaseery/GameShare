@@ -30,7 +30,26 @@ const SignUp = ({ onClose, onSignUp, onSignIn }) => {
                 const { userId } = resData;
                 onClose();
                 onSignUp({ userId, username, firstName, lastName, profilepic });
-                console.log("Sign up successful");
+    
+                const signInRes = await fetch("http://localhost:8000/signin", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+                const signInData = await signInRes.json();
+                if (signInData.message === "User signed in successfully") {
+                    const { userId } = signInData;
+                    const userRes = await fetch(`http://localhost:8000/users/${userId}`);
+                    const userData = await userRes.json();
+                    localStorage.setItem("loggedInUser", JSON.stringify({ userId, ...userData }));
+                    console.log("Sign in after sign up successful");
+                    window.location.reload(true);
+                } else {
+                    setError("Error signing in after sign up");
+                    console.log("Error signing in after sign up");
+                }
             } else {
                 setError("Error signing up");
                 console.log("Error signing up");

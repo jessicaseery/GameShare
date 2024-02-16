@@ -3,10 +3,11 @@ import styled from "styled-components"
 import { useParams } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
 
-const Profile = () => {
+const Profile = ({loggedInUser}) => {
     const { id } = useParams();
     const [userProfile, setUserProfile] = useState(null);
     const [favoriteGames, setFavoriteGames] = useState([]);
+    const [wishlist, setWishlist] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -17,6 +18,7 @@ const Profile = () => {
             .catch((error) => console.error("Error fetching user data:", error));
         }
     }, [id]);
+
     useEffect(() => {
         if (userProfile && userProfile.favorites) {
             Promise.all(userProfile.favorites.map((gameId) =>
@@ -36,7 +38,7 @@ const Profile = () => {
     const handleDeleteAccount = () => {
         try {
             if (!userProfile) {
-                console.error("User profile not available");
+                console.error("User profile cannot be deleted");
                 return;
             }
             const userId = userProfile._id;
@@ -60,15 +62,38 @@ const Profile = () => {
             console.error("Error deleting account:", error);
         }
     };
+    useEffect(() => {
+        if (id) {
+        fetch(`http://localhost:8000/users/${id}/wishlist`)
+            .then((response) => response.json())
+            .then((wishlistIds) => {
+                const promises = wishlistIds.map((gameId) =>
+                    fetch(`http://localhost:8000/games/${gameId}`)
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error(`Error fetching game: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                );
+                return Promise.all(promises);
+            })
+            .then((gamesData) => setWishlist(gamesData))
+            .catch((error) =>
+            console.error("Error fetching wishlist games:", error)
+            );
+        }
+    }, [id]);
 
     return (
     <Wrapper>
+        <Whole>
         {userProfile && (
         <div>
             <Profilepic src={`data:image/jpeg;base64,${userProfile?.profilepic?.data}`} alt="Profile Picture"/>
             <FullName>{`${userProfile.firstName}`} {`${userProfile.lastName}`}</FullName>
             <p>{`@${userProfile.username}`}</p>
-            <p>Bio?</p>
+            <Content>
             <FavGameArea>
             <Subtitle>Favourite Games</Subtitle>
             <GamesList>
@@ -82,18 +107,46 @@ const Profile = () => {
                 ))}
             </GamesList>
             </FavGameArea>
-            <DeleteButton onClick={handleDeleteAccount}>Delete Account</DeleteButton>
+            <WishlistArea>
+            <Subtitle>Wishlisted</Subtitle>
+            <GamesList>
+            {wishlist.map((game) => (
+                <LinkWishlist to={`/games/${game._id}`} key={game._id}>
+                    <GameNameList>{game.name}</GameNameList>
+                </LinkWishlist>
+                ))}
+                </GamesList>
+            </WishlistArea>
+            </Content>
+        {loggedInUser && loggedInUser.userId === userProfile._id && <DeleteButton onClick={handleDeleteAccount}>Delete Account</DeleteButton>}
         </div>
         )}
+        </Whole>
     </Wrapper>
     );
 };
 const Wrapper = styled.div`
 padding-top: 120px;
 color: white;
-background-color: #3e3e3e;
-height: 100vh;
+height: fit-content;
 text-align: center;
+padding-bottom: 50px;
+`
+const Content = styled.div`
+display: grid;
+grid-template-columns: 80% auto;
+`
+const LinkWishlist = styled(Link)`
+text-decoration: none;
+`
+const GameNameList = styled.ul`
+color: white;
+&:hover {
+    color: violet;
+}
+`
+const Whole = styled.div`
+height: auto;
 `
 const Profilepic = styled.img`
 width: 300px;
@@ -101,6 +154,8 @@ border-radius: 50%;
 `
 const DeleteButton = styled.button`
 background-color: red;
+padding: 5px 10px;
+border-radius: 20px;
 color: white;
 cursor: pointer;
 `
@@ -109,7 +164,13 @@ font-size: 45px;
 font-family: 'Khand', sans-serif;
 `
 const FavGameArea = styled.div`
-width: 75%;
+width: 90%;
+margin: auto;
+`
+const WishlistArea = styled.div`
+border: 3px solid purple;
+box-shadow: 3px 3px 5px deeppink;
+margin: 0 auto;
 `
 const GamesList = styled.div`
     display: grid;
@@ -118,8 +179,7 @@ const GamesList = styled.div`
     justify-content: center;
     align-items: center;
     padding: 20px;
-    background-color: #3e3e3e;
-    height: 100%;
+    margin-bottom: 50px;
 `;
 
 const Game = styled.div`
@@ -132,8 +192,8 @@ const Game = styled.div`
 `;
 
 const GameImage = styled.img`
-    width: 100%;
-    height: 250px;
+    width: 250px;
+    height: 150px;
     object-fit: cover;
     border-radius: 8px;
 `;
@@ -146,7 +206,6 @@ font-family: 'Khand', sans-serif;
 
 const GameName = styled.p`
     color: white;
-    text-align: center;
     position: absolute;
     bottom: 50%;
     left: 0;
@@ -155,5 +214,9 @@ const GameName = styled.p`
     font-family: 'Khand', sans-serif;
     font-weight: bold;
     text-shadow: 1px 3px 2px black;
+    background-color: rgba(10, 10, 10 ,0.5);
+    width: fit-content;
+    padding: 3px;
+    margin: auto;
 `;
 export default Profile

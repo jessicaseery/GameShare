@@ -15,7 +15,7 @@ const App = () => {
     <GlobalStyles/>
     <Header gameNamesAndIds={gameNamesAndIds} setLoggedInUser={setLoggedInUser} loggedInUser={loggedInUser}/>
         <Routes>
-          <Route path="/" element={<Home setGameNamesAndIds={setGameNamesAndIds} loggedInUserId={loggedInUser?._id}/>}/>
+          <Route path="/" element={<Home setGameNamesAndIds={setGameNamesAndIds} loggedInUserId={loggedInUser && loggedInUser._id}/>}/>
           <Route path="/games/:id" element={<GameInfo loggedInUser={loggedInUser}/>}/>
           <Route path="/profile/:id" element={<Profile loggedInUser={loggedInUser}/>}/>
         </Routes>

@@ -1,5 +1,4 @@
 "use strict";
-// import the needed node_modules.
 const express = require("express");
 const fileUpload = require("express-fileupload");
 const morgan = require("morgan");
@@ -9,15 +8,26 @@ const {
     updateGameById,
     getAllGames,
     addNewGame,
-    signIn,
-    signUp,
-    getUserById,
     addCharacterToGame,
     addCommentToGame,
     addFavoriteGame,
     getFavoriteGamesForUser,
-    deleteAccount
+    deleteGameById,    
+    updateCharacterInGame,
+    deleteCharacterFromGame,
+    deleteCommentFromGame,
+    removeFavoriteGame,
+    addToWishlist,
+    getUserWishlist,
+    removeFromWishlist
 } = require("./handlers");
+
+const {
+    signIn,
+    signUp,
+    getUserById,
+    deleteAccount,
+} = require("./userHandlers");
 
 const app = express();
     // Below are methods that are included in express(). We chain them for convenience.
@@ -43,21 +53,26 @@ const app = express();
     // ---------------------------------
     app.get("/games", getAllGames)
     app.get("/games/:id", getGameById)
-    app.get('/users/:id/favorites', getFavoriteGamesForUser);
-    app.get("/users/:id", getUserById);
+    app.get("/users/:id", getUserById)
 
+    app.post("/games", addNewGame) 
     app.patch("/games/:id", updateGameById)
+    app.delete("/games/:id", deleteGameById)
 
-    app.post("/games", addNewGame)
-    //delete game
     app.post("/games/:id/characters", addCharacterToGame)
-    //delete character
+    app.patch("/games/:id/characters/:charactersid", updateCharacterInGame)
+    app.delete("/games/:id/characters/:charactersid", deleteCharacterFromGame)
 
-    app.post('/games/:id/comments', addCommentToGame);
-    // delete comments
+    app.post('/games/:id/comments', addCommentToGame)
+    app.delete("/games/:id/comments/:commentId", deleteCommentFromGame);
 
-    app.post("/users/:id/favorites", addFavoriteGame);
-    //delete fav game
+    app.post("/users/:id/favorites", addFavoriteGame)
+    app.get('/users/:id/favorites', getFavoriteGamesForUser)
+    app.delete("/users/:id/favorites/:gameId", removeFavoriteGame)
+
+    app.post("/users/:id/wishlist", addToWishlist)
+    app.get('/users/:id/wishlist', getUserWishlist)
+    app.delete("/users/:id/wishlist/:gameId", removeFromWishlist)
 
     app.post("/signin", signIn)
     app.post("/signup", signUp)

@@ -36,15 +36,32 @@ const refreshComments = async () => {
     setComments(updatedComments);
 };
 
+const handleDeleteComment = async (commentId) => {
+    try {
+        const res = await fetch(`http://localhost:8000/games/${id}/comments/${commentId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                commentId: commentId,
+            }),
+        });
+        const resData = await res.json();
+        console.log(resData);
+        refreshComments();
+    } catch (error) {
+        console.error('Error deleting comment:', error);
+    }
+};
+
 return (
     <Wrapper>
-    
     {game ? (
         <div>
         <Content style={{ backgroundImage: `url(${game.bkg_img})` }}>
             <GameName>{game.name}</GameName>
         </Content>
-          {/* <GameImg src={game.bkg_img} alt={game.name} /> */}
         <BottomInfo>
             <div>
             <ReleaseDate>Released on {game.released}</ReleaseDate>
@@ -82,9 +99,14 @@ return (
     <IndvComments key={comment.userId}>
     <p>
         <ProfileLink href={`/profile/${comment.userId}`}>{comment.username}</ProfileLink>
+        
+        
     </p>
-        <p>{comment.text}</p>
-        {comment.recommended && <Recommended>Recommends this game</Recommended>}
+    {comment.recommended && <Recommended>✔️</Recommended>}
+        <CommentText>{comment.text}</CommentText>
+        {comment.userId === loggedInUser.userId && (
+            <DeleteButton onClick={() => handleDeleteComment(comment._id)}>🗑️</DeleteButton>
+        )}
 
     </IndvComments>
 ))}
@@ -99,14 +121,24 @@ return (
         <p>Loading...</p>
     )}
     </Wrapper>
-);
+)
 };
 
 const Wrapper = styled.div`
 color: white;
-
-    height: 100%;
-    background-color: #3e3e3e;
+height: 100%;
+background-color: #3e3e3e;
+`
+const DeleteButton = styled.button`
+background-color: red;
+cursor: pointer;
+color: white;
+font-size: 10px;
+float: right;
+border-radius: 20px;
+&:hover {
+        background-color: darkred;
+    }
 `
 const Loginpls = styled.div`
 display: flex;
@@ -114,38 +146,47 @@ flex-direction: row;
 justify-content: center;
 width: 500px;
 margin: auto;
-
 `
 const Recommended = styled.button`
-background-color: green;
+background-color: transparent;
+border: 1px solid green;
 color: white;
-border: none;
+width: 20px;
+font-size: 10x;
 border-radius: 10px;
+float: left;
+padding: 0px;
+`
+const CommentText = styled.p`
+display: flex;
+flex-wrap: wrap;
+width: 500px;
+word-wrap: break-word;
+word-break: break-all;
 `
 const Text = styled.p`
 font-size: 20px;
 font-family: 'Khand', sans-serif;
 color: white;
 `
-
 const IndvComments = styled.div`
 background-color: white;
 color: black;
 border: 2px solid purple;
-width: 350px;
+padding: 8px;
+width: fit-content;
 font-family: 'Khand', sans-serif;
 font-weight: bold;
 text-align: center;
 margin-right: 5%;
-height: 50px;
-margin-top: 5px;
+height: fit-content;
+margin-top: 10px;
 border-radius: 10px;
 `
 const AllIndComments = styled.div`
 display: flex;
 flex-direction: column;
 justify-content: center;
-
 `
 const ProfileLink = styled.a`
 color: black;
@@ -155,8 +196,10 @@ font-weight: bold;
 float: left;
 padding: 2px;
 font-size: 17px;
+&:hover {
+    color: deeppink;
+    }
 `
-
 const ReleaseDate = styled.p`
 color: white;
 text-align: left;
@@ -173,20 +216,20 @@ const CharacterName = styled.p`
 text-align: center;
 `
 const CharacterSection = styled.div`
-display: grid;
-grid-template-columns: auto auto auto auto auto auto auto auto auto;
+display: flex;
+flex-direction: row;
+flex-wrap: wrap;
+justify-content: center;
 `
 const CharacterImg = styled.img`
 width: 175px;
 height: 175px;
 `
-
 const Subtitle = styled.p`
 font-size:40px;
 text-decoration: underline;
 margin-top: 20px;
 `
-
 const Developper = styled.p`
 text-align: left;
 max-width: 300px;
@@ -205,7 +248,6 @@ margin-bottom: 50px;
 `
 const BottomInfo = styled.div`
 color: white;
-
 font-size: 18px;
 display: grid;
 grid-template-columns: auto auto;
@@ -218,44 +260,32 @@ padding: 50px;
 background-color: grey;
 border-radius: 20px;
 margin: 20px;
+width: fit-content;
 `
 const Genres = styled.p`
 text-align: left;
 margin-bottom: 20px;
 `
-
 const Content = styled.div`
-    padding: 10px;
-    position: relative;
-    z-index: 1;
-    background-size: cover;
-    background-position: center;
-    height: 500px; 
-
-    &::after {
-    content: ''; //to make it blurry
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 70px; 
-    background: linear-gradient(to bottom, rgba(62, 62, 62, 0), #3e3e3e);
-    z-index: 2;
-    }
+padding: 10px;
+position: relative;
+z-index: 1;
+background-size:cover;
+width: 80%;
+height: 500px;
+margin: auto;
+box-shadow: inset 0px 0px 30px 30px #3e3e3e;
+padding-bottom: 80px ;
 `
-
 const GameName = styled.h1`
-    font-size: 80px;
-    color: white;
-    font-family: 'Khand', sans-serif;
-    font-weight: bold;
-    text-shadow: 1px 3px 2px black;
-    display: flex;
-    justify-content: center;
-    margin-top: 200px;
+font-size: 80px;
+color: white;
+font-family: 'Khand', sans-serif;
+font-weight: bold;
+text-shadow: 1px 3px 2px black;
+display: flex;
+justify-content: center;
+margin-top: 200px;
 `
-/* const GameImg = styled.img`
-    width: 100%;
-    border-radius: 8px;
-` */
+
 export default GameInfo;

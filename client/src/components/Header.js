@@ -72,32 +72,32 @@ const Header = ({gameNamesAndIds , setLoggedInUser , loggedInUser}) => {
 )
 }
 const LogoutButton = styled.button`
-    background-color: #2b2a2c;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 8px 16px;
-    cursor: pointer;
-    margin-left: 10px;
+background-color: #2b2a2c;
+color: white;
+border: none;
+border-radius: 5px;
+padding: 8px 16px;
+cursor: pointer;
+margin-left: 10px;
 
 &:hover {
     background-color: #1c1b1d;
 }
 `;
 const HelloUserButton = styled.button`
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    color: #fff;
-    margin-right: 10px;
+background: none;
+border: none;
+cursor: pointer;
+font-size: 16px;
+color: #fff;
+margin-right: 10px;
 `;
 const UserProfile = styled.div`
-    color: white;
-    font-size: 18px;
-    font-family: 'Khand', sans-serif;
-    margin-left: 80%;
-    margin-top: -50px;
+color: white;
+font-size: 18px;
+font-family: 'Khand', sans-serif;
+margin-left: 80%;
+margin-top: -50px;
 
 `;
 const Wrapper = styled.div`
@@ -147,10 +147,10 @@ overflow: hidden;
     right: 0;
     height: 2px;
     background: linear-gradient(
-      to right,
-      #6717A3, /* Dark Purple color */
-      #AA0FF2,
-      #F10FF2 /* Light Purple color, adjust as needed */
+    to right,
+    #6717A3, /* Dark Purple color */
+    #AA0FF2,
+    #F10FF2 /* Light Purple color, adjust as needed */
     );
     background-size: 200% 100%;
     animation: ${flashAnimation} 4s linear infinite;

@@ -20,18 +20,18 @@ const Profile = ({loggedInUser}) => {
     }, [id]);
 
     useEffect(() => {
-        if (userProfile && userProfile.favorites) {
-            Promise.all(userProfile.favorites.map((gameId) =>
-                fetch(`http://localhost:8000/games/${gameId}`)
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error(`Error fetching game: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-            ))
-            .then((gamesData) => setFavoriteGames(gamesData))
-            .catch((error) => console.error("Error fetching games:", error.message));
+    if (userProfile && userProfile.favorites) {
+        Promise.all(userProfile.favorites.map((gameId) =>
+        fetch(`http://localhost:8000/games/${gameId}`)
+                .then((response) => {
+                if (!response.ok) {
+                throw new Error(`Error fetching game: ${response.status}`);
+                }
+            return response.json();
+            })
+        ))
+        .then((gamesData) => setFavoriteGames(gamesData))
+        .catch((error) => console.error("Error fetching games:", error.message));
         }
     }, [userProfile]);
 
@@ -95,7 +95,7 @@ const Profile = ({loggedInUser}) => {
             <p>{`@${userProfile.username}`}</p>
             <Content>
             <FavGameArea>
-            <Subtitle>Favourite Games</Subtitle>
+            <Subtitle>Favourite Games ❤️</Subtitle>
             <GamesList>
                 {favoriteGames.map((game) => (
                     <Link to={`/games/${game._id}`} key={game._id}>
@@ -108,7 +108,7 @@ const Profile = ({loggedInUser}) => {
             </GamesList>
             </FavGameArea>
             <WishlistArea>
-            <Subtitle>Wishlisted</Subtitle>
+            <Subtitle>Wishlisted ⭐</Subtitle>
             <GamesList>
             {wishlist.map((game) => (
                 <LinkWishlist to={`/games/${game._id}`} key={game._id}>
@@ -173,13 +173,13 @@ box-shadow: 3px 3px 5px deeppink;
 margin: 0 auto;
 `
 const GamesList = styled.div`
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    margin-bottom: 50px;
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+gap: 20px;
+justify-content: center;
+align-items: center;
+padding: 20px;
+margin-bottom: 50px;
 `;
 
 const Game = styled.div`
@@ -192,10 +192,10 @@ const Game = styled.div`
 `;
 
 const GameImage = styled.img`
-    width: 250px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 8px;
+width: 250px;
+height: 150px;
+object-fit: cover;
+border-radius: 8px;
 `;
 const Subtitle = styled.p`
 font-size:30px;
@@ -205,18 +205,18 @@ font-family: 'Khand', sans-serif;
 `
 
 const GameName = styled.p`
-    color: white;
-    position: absolute;
-    bottom: 50%;
-    left: 0;
-    right: 0;
-    font-size: 20px;
-    font-family: 'Khand', sans-serif;
-    font-weight: bold;
-    text-shadow: 1px 3px 2px black;
-    background-color: rgba(10, 10, 10 ,0.5);
-    width: fit-content;
-    padding: 3px;
-    margin: auto;
+color: white;
+position: absolute;
+bottom: 50%;
+left: 0;
+right: 0;
+font-size: 20px;
+font-family: 'Khand', sans-serif;
+font-weight: bold;
+text-shadow: 1px 3px 2px black;
+background-color: rgba(10, 10, 10 ,0.5);
+width: fit-content;
+padding: 3px;
+margin: auto;
 `;
 export default Profile

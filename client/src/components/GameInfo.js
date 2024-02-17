@@ -78,13 +78,13 @@ return (
                 <CharacterSection>
                     {game.characters.map((character, index) => (
                     <Character key={index}>
-                        <CharacterName>{character.name}</CharacterName>
-                        <CharacterImg src={character.image} alt={character.name} />
+                    <CharacterName>{character.name}</CharacterName>
+                    <CharacterImg src={character.image} alt={character.name} />
                     </Character>
     ))}
-                </CharacterSection>
+            </CharacterSection>
     ) : (
-                <p>No characters available for this game.</p>
+            <p>No characters available for this game.</p>
     )}
             </div>
         </Infobox>

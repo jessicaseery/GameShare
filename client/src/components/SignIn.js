@@ -105,28 +105,28 @@ const loadingAnimation = keyframes`
 }
 `;
 const LoadingAnimation = styled.div`
-    border: 8px solid #6717A3;
-    border-top: 8px solid #AA0FF2;
-    border-radius: 50%;
-    width: 70px;
-    height: 70px;
-    margin: auto;
-    margin-top: 50px;
-    animation: ${loadingAnimation} 1.5s linear infinite;
+border: 8px solid #6717A3;
+border-top: 8px solid #AA0FF2;
+border-radius: 50%;
+width: 70px;
+height: 70px;
+margin: auto;
+margin-top: 50px;
+animation: ${loadingAnimation} 1.5s linear infinite;
 `;
 const Wrapper = styled.div`
-    margin-top: 50px;
-    background-color: #B49CC1;
-    height: 70vh;
-    padding: 30px;
-    width: 40%;
-    position: relative;
-    z-index: 100;
-    margin: auto;
-    border-radius: 10px;
-    pointer-events: auto;
-    animation: ${fadeIn} 0.5s ease;
-    font-family: 'Khand', sans-serif;
+margin-top: 50px;
+background-color: #B49CC1;
+height: 70vh;
+padding: 30px;
+width: 40%;
+position: relative;
+z-index: 100;
+margin: auto;
+border-radius: 10px;
+pointer-events: auto;
+animation: ${fadeIn} 0.5s ease;
+font-family: 'Khand', sans-serif;
 `
 const InputBoxes = styled.input`
 border-color: rgb(211, 211, 211);
@@ -162,12 +162,12 @@ font-size: 30px;
 `
 
 const CloseButton = styled.button`
-    background-color: grey;
-    margin-left: 97%;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    font-size: 20px;
-    cursor: pointer;
+background-color: grey;
+margin-left: 97%;
+color: white;
+border: none;
+border-radius: 20px;
+font-size: 20px;
+cursor: pointer;
 `;
 export default SignIn

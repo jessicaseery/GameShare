@@ -101,7 +101,12 @@ const Home = ({loggedInUserId, setGameNamesAndIds}) => {
     };
 
     return(
+        <div>
+        {loggedInUserId && (
+            <Text>toggle the ❤️ to add to favourite, toggle the ⭐ to add to wishlist</Text>
+            )}
         <Wrapper>
+            
         {games.map((game) => (
         <Game key={game._id}>
             <GameContent>
@@ -123,10 +128,11 @@ const Home = ({loggedInUserId, setGameNamesAndIds}) => {
         </Game>
         ))}
     </Wrapper>
+    </div>
     )
 }
 const Game = styled.div`
-    position: relative;
+position: relative;
     filter: grayscale(20%);
 &:hover {
     filter: grayscale(0%);
@@ -144,43 +150,51 @@ align-items: center;
 padding: 20px;
 padding-top: 100px;
 `
+const Text = styled.p`
+color:white;
+padding-top: 100px;
+text-align: center;
+margin-bottom: -70px;
+`
 
 const FavoriteButton = styled.button`
-    background: none;
-    border: none;
-    color: ${({ customprops }) => (customprops.favorite ? 'pink' : 'rgba(128, 128, 128, 1)')};
-    filter: ${({ customprops }) => (customprops.favorite ? 'none' : 'grayscale(100%)')};
-    font-size: 24px;
-    cursor: pointer;
-    
+background: none;
+border: none;
+color: ${({ customprops }) => (customprops.favorite ? 'pink' : 'rgba(128, 128, 128, 1)')};
+filter: ${({ customprops }) => (customprops.favorite ? 'none' : 'grayscale(100%)')};
+font-size: 24px;
+cursor: pointer;
 `
 const WishlistButton = styled.button`
-    background: none;
-    border: none;
-    color: ${({ customprops }) => (customprops.wishlist ? 'yellow' : 'rgba(128, 128, 128, 1)')};
-    filter: ${({ customprops }) => (customprops.wishlist ? 'none' : 'grayscale(100%)')};
-    font-size: 24px;
-    cursor: pointer;
+background: none;
+border: none;
+color: ${({ customprops }) => (customprops.wishlist ? 'yellow' : 'rgba(128, 128, 128, 1)')};
+filter: ${({ customprops }) => (customprops.wishlist ? 'none' : 'grayscale(100%)')};
+font-size: 24px;
+cursor: pointer;
 `;
 
 const GameImage = styled.img`
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    border-radius: 8px;
+width: 100%;
+height: 250px;
+object-fit: cover;
+border-radius: 8px;
+&:hover {
+filter: grayscale(0%);
+box-shadow: 4px 4px 4px 5px #AA0FF2;
+}
 `
-
 const GameName = styled.p`
-    color: white;
-    text-align: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 25px;
-    font-family: 'Khand', sans-serif;
-    font-weight: bold;
-    text-shadow: 1px 3px 2px black;
+color: white;
+text-align: center;
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+font-size: 25px;
+font-family: 'Khand', sans-serif;
+font-weight: bold;
+text-shadow: 1px 3px 2px black;
 `;
 
 export default Home

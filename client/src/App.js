@@ -1,12 +1,27 @@
-import React from "react";
+import React, {useState} from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Header from "./components/Header"
+import Home from "./components/Home"
+import GlobalStyles from "./GlobalStyles";
+import GameInfo from "./components/GameInfo";
+import Profile from "./components/Profile";
 
-function App() {
+const App = () => {
+  const [gameNamesAndIds, setGameNamesAndIds] = useState([]);
+  const [loggedInUser, setLoggedInUser] = useState(null);
+
   return (
-    <div >
-    <h1>This is my final project</h1>
-    <p>test - hello</p>
-    </div>
+    <BrowserRouter>
+    <GlobalStyles/>
+    <Header gameNamesAndIds={gameNamesAndIds} setLoggedInUser={setLoggedInUser} loggedInUser={loggedInUser}/>
+        <Routes>
+          <Route path="/" element={<Home setGameNamesAndIds={setGameNamesAndIds} loggedInUserId={loggedInUser && loggedInUser._id}/>}/>
+          <Route path="/games/:id" element={<GameInfo loggedInUser={loggedInUser}/>}/>
+          <Route path="/profile/:id" element={<Profile loggedInUser={loggedInUser}/>}/>
+        </Routes>
+    </BrowserRouter>
   );
 }
+
 
 export default App;

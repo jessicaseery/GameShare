@@ -64,7 +64,7 @@ const signUp = async (req, res) => {
             profilepic,
         };
         await addUser(userData);
-        res.json({ message: 'User signed up successfully! Hooray!', userId: newUserId });
+        res.json({ message: 'User signed up successfully', userId: newUserId });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error signing up :( ' });
